@@ -1,5 +1,5 @@
 FROM node:6.10-alpine
-MAINTAINER Yuki Takei <yuki@weseek.co.jp>
+MAINTAINER Kohei Akiyama <kheiakiyama@gmail.com>
 
 ENV APP_VERSION v1.2.11
 ENV APP_DIR /opt/crowi-plus
@@ -23,6 +23,14 @@ RUN apk add --no-cache --virtual .build-deps git \
     && yarn cache clean \
     && apk del .build-deps
 
+RUN apt-get update \ 
+  && apt-get install -y --no-install-recommends openssh-server \
+  && echo "root:Docker!" | chpasswd
+COPY sshd_config /etc/ssh/
+EXPOSE 2222
+COPY init_container.sh /bin/
+RUN chmod 755 /bin/init_container.sh 
+
 VOLUME /data
 EXPOSE 3000
-CMD ["npm", "run", "server:prod"]
+CMD ["/bin/init_container.sh"]
