@@ -23,7 +23,7 @@ RUN apk add --no-cache --virtual .build-deps git \
     && yarn cache clean \
     && apk del .build-deps
 
-RUN apk add --no-cache --virtual openssh-server \
+RUN apk add --no-cache --virtual bash openssh-server \
   && echo "root:Docker!" | chpasswd
 COPY sshd_config /etc/ssh/
 EXPOSE 2222
